@@ -27,7 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-
+//http://blog.csdn.net/builder_taoge/article/details/70170590
 public class MainActivity extends AppCompatActivity implements View.OnClickListener ,PopupWindow.OnDismissListener{
     private static final String IMAGE_FILE_PATH = Environment.getExternalStorageDirectory().toString() + "/android/data/"+"/cache/";
     private static final String IMAGE_FILE_NAME = "faceImage.jpg";
