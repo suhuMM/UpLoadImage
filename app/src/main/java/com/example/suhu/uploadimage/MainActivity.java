@@ -199,14 +199,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.setDataAndType(uri, "image/*");
         // 设置裁剪
         intent.putExtra("crop", "true");
-        // aspectX aspectY 是宽高的比例
         intent.putExtra("aspectX", 1);
         intent.putExtra("aspectY", 1);
-        // outputX outputY 是裁剪图片宽高
         intent.putExtra("outputX", 320);
         intent.putExtra("outputY", 320);
         intent.putExtra("return-data", true);
-        startActivityForResult(intent, 2);
+        startActivityForResult(intent, RESULT_REQUEST_CODE);
     }
 
 
