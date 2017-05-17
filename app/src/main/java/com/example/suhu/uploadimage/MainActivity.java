@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,13 +38,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int CAMERA_REQUEST_CODE = 1;
     private static final int RESULT_REQUEST_CODE = 2;
 
-    private BitmapDrawable drawable;
 
     private RoundedImage imageView;
     private PopupWindow photoPopWindow;
     private RelativeLayout pop_menu_background;
 
-    private boolean isfacechanged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case RESULT_REQUEST_CODE:
                     if (data != null) {
-                        getImageToView(data);
+                        getImageToView(FACE_PATH);
                     }
                     break;
             }
@@ -197,30 +196,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
-        // 设置裁剪
         intent.putExtra("crop", "true");
         intent.putExtra("aspectX", 1);
         intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX", 320);
-        intent.putExtra("outputY", 320);
-        intent.putExtra("return-data", true);
+        WindowManager windowManager = getWindowManager();
+        Display display = windowManager.getDefaultDisplay();
+        int screenWidth = display.getWidth();
+        if (screenWidth>800){
+            intent.putExtra("outputX", 800);
+            intent.putExtra("outputY", 800);
+        }else {
+            intent.putExtra("outputX", 600);
+            intent.putExtra("outputY", 600);
+        }
+        intent.putExtra("return-data", false);
+        intent.putExtra("noFaceDetection", true);
+        intent.putExtra("scale", true);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(FACE_PATH)));
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         startActivityForResult(intent, RESULT_REQUEST_CODE);
     }
 
 
     /**
      *@method 保存裁剪之后的图片数据
-     *@param data
+     *@param srcFile
      *
     */
-    private void getImageToView(Intent data) {
-        Bundle extras = data.getExtras();
-        if (extras != null) {
-            Bitmap photo = extras.getParcelable("data");
-            drawable = new BitmapDrawable(photo);
-            imageView.setImageDrawable(drawable);
-            isfacechanged = true;
-            SaveBitmapAsFile(FACE_PATH, photo);
+    private void getImageToView(String srcFile) {
+        Bitmap bm = BitmapFactory.decodeFile(srcFile.toString());
+        if (bm != null) {
+            imageView.setImageBitmap(bm);
+            SaveBitmapAsFile(FACE_PATH, bm);
         }
     }
 
